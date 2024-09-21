@@ -3,10 +3,4 @@ import { CreateProductDto } from './create-product.dto';
 import { IsNumber, IsOptional, IsPositive } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class UpdateProductDto extends PartialType(CreateProductDto) {
-  @IsNumber()
-  @IsPositive()
-  @Type(() => Number)
-  @IsOptional()
-  id: number;
-}
+export class UpdateProductDto extends PartialType(CreateProductDto) {}

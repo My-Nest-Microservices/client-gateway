@@ -62,15 +62,11 @@ export class ProductsController {
 
   @Patch(':id')
   updateProduct(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    updateProductDto.id = +id;
-
-    console.log({ updateProductDto });
-
     return this.productClient
-      .send({ cmd: 'update_product' }, updateProductDto)
+      .send({ cmd: 'update_product' }, { id, ...updateProductDto })
       .pipe(
         catchError((error) => {
           throw new RpcException(error);
