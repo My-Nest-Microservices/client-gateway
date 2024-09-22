@@ -8,11 +8,9 @@ import {
   Delete,
   Inject,
 } from '@nestjs/common';
-
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { ORDERS_SERVICE } from 'src/config';
 import { ClientProxy } from '@nestjs/microservices';
+import { CreateOrderDto } from './dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -32,6 +30,6 @@ export class OrdersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.ordersClient.send('findOneOrder', id);
+    return this.ordersClient.send('findOneOrder', { id });
   }
 }
