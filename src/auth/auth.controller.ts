@@ -14,6 +14,9 @@ import { firstValueFrom } from 'rxjs';
 import { LoginUserDto, RegisterUserDto } from './dto';
 import { Request } from 'express';
 import { AuthGuard } from './guards/auth.guard';
+import { User } from './decorators';
+import { CurrentUser } from './interfaces/current-user.interface';
+import { Token } from './decorators/token.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -47,9 +50,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('verify')
-  async verifyUser(@Req() req: Request) {
-    return await firstValueFrom(
-      this.client.send('auth.verify.user', req['token']),
-    );
+  async verifyUser(@User() user: CurrentUser, @Token() token: string) {
+    return await firstValueFrom(this.client.send('auth.verify.user', token));
   }
 }
