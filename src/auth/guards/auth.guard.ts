@@ -1,10 +1,19 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { Request } from 'express';
+import { catchError, firstValueFrom } from 'rxjs';
+import { NATS_SERVICE } from 'src/config';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest() as Request;
 
@@ -19,13 +28,17 @@ export class AuthGuard implements CanActivate {
       });
     }
 
+    const data = this.client.send('auth.verify.user', token).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+
+    const { user, token: newToken } = await firstValueFrom(data);
+
     try {
-      request['user'] = {
-        id: 1,
-        name: 'John Doe',
-        email: 'V2r0s@example.com',
-      };
-      request['token'] = token;
+      request['user'] = user;
+      request['token'] = newToken;
     } catch (error) {
       throw new RpcException({
         status: 401,
