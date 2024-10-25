@@ -14,7 +14,7 @@ steps:
     args:
       [
         'push',
-        'europe-southwest1-docker.pkg.dev/microservices-439614/image-registry/auth-ms',
+        'europe-southwest1-docker.pkg.dev/microservices-439614/image-registry/client-gateway',
       ]
 options:
   logging: CLOUD_LOGGING_ONLY
