@@ -29,6 +29,7 @@ async function bootstrap() {
 
   await app.listen(envs.port);
 
+  console.log('Health Check implemented');
   logger.log(`Application is running on: ${envs.port}`);
 }
 bootstrap();
